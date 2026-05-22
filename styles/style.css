@@ -170,3 +170,16 @@ nav ul a {
     font-size: 1rem;
     font-family: 'Playfair Display', Impact;
 }
+
+
+.rk-rpanel {
+    position: fixed;
+    top: 100px;
+    right: 1px;
+    width: 210px;
+    background-color: #cccccc;
+    border-radius: 8px;
+    border: 2px solid #cccccc;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 232;
+}
