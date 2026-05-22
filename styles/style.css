@@ -45,3 +45,16 @@ body:active {
   width: 45%;
   height: auto;
 }
+
+#leon_be_like{
+  background-color: #bb5994;
+  border: groove;
+  color: rgb(255, 255, 255);
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 2px 2px;
+}
