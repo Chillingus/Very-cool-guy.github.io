@@ -5,8 +5,8 @@
         
         const scene = new BABYLON.Scene(engine);
         scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
-        const camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 1, 2), scene);
-        camera.setTarget(new BABYLON.Vector3(0, 0.5, 0));
+        const camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 0.7, 1.8), scene);
+        camera.setTarget(new BABYLON.Vector3(0, 0.7, 0));
         
         BABYLON.SceneLoader.ImportMeshAsync("", "resources/", "Niko.glb", scene).then(function(result) {
           result.meshes.forEach(function(mesh) {
