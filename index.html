@@ -27,5 +27,55 @@
     </details>
     <p>i'm sorry i don't watch transformers i just pasted the wiki</p>
     <img src="resources/homelander-admin-taken.gif">
+    <div id="chat-button">💬</div>
+<div id="chat-widget">
+  <div id="chat-header">Chat Noir</div>
+
+  <div id="chat-messages">
+    <div class="message bot">
+      Haiiiii, it's me, the AI assistant you didn't want, need, or know existed until we put a big button on our homepage to tell you about it!
+    </div>
+  </div>
+
+  <div id="chat-input-area">
+    <button id="chat-send">Start Live Chat</button>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const button = document.getElementById("chat-button");
+  const widget = document.getElementById("chat-widget");
+  const send = document.getElementById("chat-send");
+  const messages = document.getElementById("chat-messages");
+
+  let open = false;
+
+  button.addEventListener("click", () => {
+    open = !open;
+    widget.classList.toggle("open", open);
+  });
+
+  function addMessage(text, type) {
+    const msg = document.createElement("div");
+    msg.className = `message ${type}`;
+    msg.textContent = text;
+
+    messages.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  send.addEventListener("click", () => {
+    addMessage("Starting Live Chat...", "user");
+
+    setTimeout(() => {
+      addMessage(
+        "All human representatives are currently unavailable. Please meow at your screen and try again in 2-3 minutes.",
+        "bot"
+      );
+    }, 250);
+  });
+});
+</script>
   </body>
 </html>
