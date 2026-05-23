@@ -957,9 +957,14 @@
                     paddle.h -= PROJECTILE_DAMAGE
                     balls.splice(i, 1)
                     if (paddle.h <= 0) {
-                        livesLostCount++
-                        paddle.h = PADDLE_HEIGHT_INITIAL
-                        paddle.y = (VIRTUAL_HEIGHT - PADDLE_HEIGHT_INITIAL) / 2
+                            if(DIE_REFRESH){
+                                die()
+                            }else{
+                                livesLostCount++
+                                paddle.h = PADDLE_HEIGHT_INITIAL
+                                diamondPaddle.bonus = INITIAL_DIAMOND_BONUS
+                                paddle.y = (VIRTUAL_HEIGHT - PADDLE_HEIGHT_INITIAL) / 2
+                            }
                     }
                     continue // Skip block collision check for this destroyed projectile
                 }
