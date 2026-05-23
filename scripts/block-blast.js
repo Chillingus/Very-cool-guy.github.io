@@ -4,6 +4,7 @@
     const MAX_LIVES = 5
     const BALL_SPEED = 300 // Pixels per second
     const MIN_BOUNCE_ANGLE = (15 * Math.PI) / 180 // Minimum angle for non-horizontal bounce
+    const DIE_REFRESH = true
 
     /* --- BLOCK SETTINGS --- */
     const BLOCK_SIZE = 40
@@ -86,7 +87,20 @@
         document.getElementById('pauseBtn').textContent = 'Pause'
         paddle.h = PADDLE_HEIGHT_INITIAL
         diamondPaddle.h = paddle.h
+        diamondPaddle.bonus = INITIAL_DIAMOND_BONUS
         projectileTimer = 0
+    }
+
+    function die() { //Clear all balls and reset paddle and serving ball, but maintain blocks
+        paddle.y = (VIRTUAL_HEIGHT - PADDLE_HEIGHT_INITIAL) / 2
+        diamondPaddle.y = paddle.y
+        diamondPaddle.bonus = INITIAL_DIAMOND_BONUS
+        livesLostCount++;
+        balls = []
+        serveInitialBall()
+        isPaused = false
+        paddle.h = PADDLE_HEIGHT_INITIAL
+        diamondPaddle.h = paddle.h
     }
 
     function togglePause() {
@@ -905,10 +919,14 @@
                         diamondPaddle.h = paddle.h + diamondPaddle.bonus
                         balls.splice(i, 1)
                         if (paddle.h <= 0) {
-                            livesLostCount++
-                            paddle.h = PADDLE_HEIGHT_INITIAL
-                            diamondPaddle.bonus = INITIAL_DIAMOND_BONUS
-                            paddle.y = (VIRTUAL_HEIGHT - PADDLE_HEIGHT_INITIAL) / 2
+                            if(DIE_REFRESH){
+                                die()
+                            }else{
+                                livesLostCount++
+                                paddle.h = PADDLE_HEIGHT_INITIAL
+                                diamondPaddle.bonus = INITIAL_DIAMOND_BONUS
+                                paddle.y = (VIRTUAL_HEIGHT - PADDLE_HEIGHT_INITIAL) / 2
+                            }
                         }
                         continue // Skip block collision check for this destroyed projectile
                     }
@@ -1037,8 +1055,12 @@
         )
 
         if (!areAnyNormalBallsRemaining) {
-            livesLostCount++
-            serveInitialBall()
+            if(DIE_REFRESH){
+                die()
+            }else{
+                livesLostCount++
+                serveInitialBall()
+            }
         }
 
         if (livesLostCount >= MAX_LIVES) {
