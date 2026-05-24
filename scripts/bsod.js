@@ -116,7 +116,7 @@
 
   window.triggerBsod = showBsod;
 
-  const MIN_DELAY = 30000;
+  const MIN_DELAY = 70000;
   const MAX_DELAY = 90000;
   const delay = MIN_DELAY + Math.random() * (MAX_DELAY - MIN_DELAY);
   setTimeout(showBsod, delay);
