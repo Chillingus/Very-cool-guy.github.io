@@ -251,7 +251,7 @@
         }//end update
 
         this.display = function(){
-            ctx.globalAlpha(this.lifetime/this.LIFETIME) //Text fades out
+            ctx.globalAlpha = (this.lifetime/this.LIFETIME) //Text fades out
             ctx.fillStyle = this.color
             ctx.font = `${this.size}px system-ui, sans-serif`
             ctx.textAlign = 'center'
@@ -260,7 +260,7 @@
                 this.x,
                 this.y
             )
-            ctx.globalAlpha(1)//don't wanna make everything else transparent
+            ctx.globalAlpha = 1//don't wanna make everything else transparent
         }// end display
     }//please work I'm making this all in one go without testing
 
