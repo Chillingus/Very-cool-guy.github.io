@@ -245,9 +245,11 @@
                     this.x-=dt
                     break
             }
-            if(this.lifetime-=dt <= 0){//decrement lifetime and also check if I should go away~
+            
+            if(this.lifetime <= 0){//decrement lifetime and also check if I should go away~
                 this.expired = true
             }
+            this.lifetime-=dt
         }//end update
 
         this.display = function(){
