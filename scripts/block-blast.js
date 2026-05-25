@@ -623,12 +623,21 @@
                     }
                     // Delay chain reaction to simulate explosion spread
                     setTimeout(() => {
+                        let pointCount = 0
+                        
                         for (const block of blocksToActivate) {
                             if (!block.isDestroyed) {
                                 // Only activate if not already destroyed
                                 block.activateEffect() // Recursive activation!
+                                pointCount++
                             }
                         }
+                        // add flavor text for score increase
+                        let color = '#ffcc66'
+                        ctx.font = '30px system-ui, sans-serif'
+                        let textWidth = ctx.measureText(`Score: ${currentScore}`).width
+                        //                             text, x, y, size, color, textAlign = 'right', direction = "down", lifetime = 40
+                        floatyTexts.push(new floatyText(`+${pointCount}`, VIRTUAL_WIDTH * 0.4 + textWidth/2, 40, 30, color))
                     }, 250)
                     break
                     
@@ -649,24 +658,6 @@
                     break
             }
             currentScore++
-            // add flavor text for score increase
-            let color = '#777'
-            
-            switch (hittingBall.type) {
-                case 'bomb':
-                    color = '#6666ff'
-                    break
-                case 'piercing':
-                    color = '#66ff66'
-                    break
-                default:
-                    color = '#ffffff'
-                    break
-            }// projectiles and diamonds shouldn't be breaking blocks anyways
-            ctx.font = '30px system-ui, sans-serif'
-            let textWidth = ctx.measureText(`Score: ${currentScore}`).width
-            //                             text, x, y, size, color, textAlign = 'right', direction = "down", lifetime = 40
-            floatyTexts.push(new floatyText("+1", VIRTUAL_WIDTH * 0.4 + textWidth/2, 40, 30, color))
         }
 
         this.checkForCollisions = function (ball) {
@@ -684,6 +675,25 @@
                 !ball.isDisabled
             ) {
                 this.activateEffect(ball)
+                
+                // add flavor text for score increase
+                let color = '#777'
+                switch (ball.type) {
+                    case 'bomb':
+                        color = '#6666ff'
+                        break
+                    case 'piercing':
+                        color = '#66ff66'
+                        break
+                    default:
+                        color = '#ffffff'
+                        break
+                }// projectiles and diamonds shouldn't be breaking blocks anyways
+                ctx.font = '30px system-ui, sans-serif'
+                let textWidth = ctx.measureText(`Score: ${currentScore}`).width
+                //                             text, x, y, size, color, textAlign = 'right', direction = "down", lifetime = 40
+                floatyTexts.push(new floatyText("+1", VIRTUAL_WIDTH * 0.4 + textWidth/2, 40, 30, color))
+                
                 return true
             }
 
@@ -712,14 +722,23 @@
                     const bombCenterX = ball.x
                     const bombCenterY = ball.y
 
+                    let pointCount = 0
                     for (const block of blocks) {
                         const dx = block.x + block.w / 2 - bombCenterX
                         const dy = block.y + block.h / 2 - bombCenterY
                         const distance = Math.sqrt(dx * dx + dy * dy)
                         if (distance < BOMB_EXPLOSION_RADIUS) {
                             block.activateEffect()
+                            pointCount++
                         }
                     }
+                    // add flavor text for score increase
+                    let color = '#6464fa'
+                    ctx.font = '30px system-ui, sans-serif'
+                    let textWidth = ctx.measureText(`Score: ${currentScore}`).width
+                    //                             text, x, y, size, color, textAlign = 'right', direction = "down", lifetime = 40
+                    floatyTexts.push(new floatyText(`+${pointCount}`, VIRTUAL_WIDTH * 0.4 + textWidth/2, 40, 30, color))
+                    
                     ball.isDestroyed = true // Destroy the bomb ball
 
                     // Generate bomb explosion particles
@@ -745,6 +764,24 @@
                         ball.isDisabled = true;
                     }
                     this.activateEffect(ball)
+                    // add flavor text for score increase
+                    let color = '#777'
+                    
+                    switch (ball.type) {
+                        case 'bomb':
+                            color = '#6666ff'
+                            break
+                        case 'piercing':
+                            color = '#66ff66'
+                            break
+                        default:
+                            color = '#ffffff'
+                            break
+                    }// projectiles and diamonds shouldn't be breaking blocks anyways
+                    ctx.font = '30px system-ui, sans-serif'
+                    let textWidth = ctx.measureText(`Score: ${currentScore}`).width
+                    //                             text, x, y, size, color, textAlign = 'right', direction = "down", lifetime = 40
+                    floatyTexts.push(new floatyText("+1", VIRTUAL_WIDTH * 0.4 + textWidth/2, 40, 30, color))
                 }
             }
 
