@@ -70,6 +70,7 @@
     let balls = []
     let brokenBlockParticles = []
     let explosionParticles = []
+    let floatyTexts = [] //aka flavor text
 
     /* --- GAME MANAGEMENT FUNCTIONS --- */
     function startGame() {
@@ -101,6 +102,11 @@
         isPaused = false
         paddle.h = PADDLE_HEIGHT_INITIAL
         diamondPaddle.h = paddle.h
+        
+        ctx.font = '30px system-ui, sans-serif'
+        let textWidth = ctx.measureText(`Lives: ${MAX_LIVES - livesLostCount}`).width
+        //                             text, x, y, size, color, textAlign = 'right', direction = "down", lifetime = 40
+        floatyTexts.push(new floatyText("Lives -1", VIRTUAL_WIDTH * 0.2 + textWidth/2, 40, 30, '#ff0000')) //flavor text to indicate that you lost a life
     }
 
     function togglePause() {
@@ -212,6 +218,55 @@
     document.getElementById('pauseBtn').addEventListener('click', togglePause)
     document.getElementById('restartBtn').addEventListener('click', startGame)
 
+    /* --- FLAVOR TEXT --- */
+    //FLAVOR TEXT THAT I NAMED FLOATY TEXT BECAUSE IT FLOATS AWAY
+    function floatyText(text, x, y, size, color, textAlign = 'right', direction = "down", lifetime = 40){
+        this.text = text
+        this.x = x
+        this.y = y
+        this.size = size
+        this.color = color
+        this.textAlign = textAlign
+        this.direction = direction
+        this.lifetime = lifetime
+        //extra variables for stuff
+        this.LIFETIME = lifetime;
+        this.expired = false;
+
+        //update position and check if too old
+        this.update = function(dt){
+            let speed = dt * 60
+            switch(this.direction){
+                case "up":
+                    this.y-=speed
+                    break
+                case "down":
+                    this.y+=speed
+                    break
+                case "right":
+                    this.x+=speed
+                    break
+                case "left":
+                    this.x-=speed
+                    break
+            }
+            
+            if(this.lifetime <= 0){//decrement lifetime and also check if I should go away~
+                this.expired = true
+            }
+            this.lifetime-=speed
+        }//end update
+
+        this.display = function(){
+            ctx.globalAlpha = Math.max(0, (this.lifetime/this.LIFETIME)) //Text fades out
+            ctx.font = `${this.size}px system-ui, sans-serif`
+            ctx.fillStyle = this.color
+            ctx.textAlign = this.textAlign
+            ctx.fillText(this.text, this.x, this.y)
+            ctx.globalAlpha = 1//don't wanna make everything else transparent
+        }// end display
+    }//please work I'm making this all in one go without testing
+
     /* --- GAME OBJECTS --- */
 
     // PADDLE
@@ -222,7 +277,7 @@
         h: PADDLE_HEIGHT_INITIAL,
         dy: 0, // Velocity in y-direction
     }
-    // diamodn paddle
+    // diamond paddle
     let diamondPaddle = {
         x: 30,
         y: (VIRTUAL_HEIGHT - PADDLE_HEIGHT_INITIAL) / 2,
@@ -568,12 +623,21 @@
                     }
                     // Delay chain reaction to simulate explosion spread
                     setTimeout(() => {
+                        let pointCount = 0
+                        
                         for (const block of blocksToActivate) {
                             if (!block.isDestroyed) {
                                 // Only activate if not already destroyed
                                 block.activateEffect() // Recursive activation!
+                                pointCount++
                             }
                         }
+                        // add flavor text for score increase
+                        let color = '#ffcc66'
+                        ctx.font = '30px system-ui, sans-serif'
+                        let textWidth = ctx.measureText(`Score: ${currentScore}`).width
+                        //                             text, x, y, size, color, textAlign = 'right', direction = "down", lifetime = 40
+                        floatyTexts.push(new floatyText(`+${pointCount}`, VIRTUAL_WIDTH * 0.4 + textWidth/2, 40, 30, color))
                     }, 250)
                     break
                     
@@ -611,6 +675,25 @@
                 !ball.isDisabled
             ) {
                 this.activateEffect(ball)
+                
+                // add flavor text for score increase
+                let color = '#777'
+                switch (ball.type) {
+                    case 'bomb':
+                        color = '#6666ff'
+                        break
+                    case 'piercing':
+                        color = '#66ff66'
+                        break
+                    default:
+                        color = '#ffffff'
+                        break
+                }// projectiles and diamonds shouldn't be breaking blocks anyways
+                ctx.font = '30px system-ui, sans-serif'
+                let textWidth = ctx.measureText(`Score: ${currentScore}`).width
+                //                             text, x, y, size, color, textAlign = 'right', direction = "down", lifetime = 40
+                floatyTexts.push(new floatyText("+1", VIRTUAL_WIDTH * 0.4 + textWidth/2, 40, 30, color))
+                
                 return true
             }
 
@@ -639,14 +722,23 @@
                     const bombCenterX = ball.x
                     const bombCenterY = ball.y
 
+                    let pointCount = 0
                     for (const block of blocks) {
                         const dx = block.x + block.w / 2 - bombCenterX
                         const dy = block.y + block.h / 2 - bombCenterY
                         const distance = Math.sqrt(dx * dx + dy * dy)
                         if (distance < BOMB_EXPLOSION_RADIUS) {
                             block.activateEffect()
+                            pointCount++
                         }
                     }
+                    // add flavor text for score increase
+                    let color = '#6464fa'
+                    ctx.font = '30px system-ui, sans-serif'
+                    let textWidth = ctx.measureText(`Score: ${currentScore}`).width
+                    //                             text, x, y, size, color, textAlign = 'right', direction = "down", lifetime = 40
+                    floatyTexts.push(new floatyText(`+${pointCount}`, VIRTUAL_WIDTH * 0.4 + textWidth/2, 40, 30, color))
+                    
                     ball.isDestroyed = true // Destroy the bomb ball
 
                     // Generate bomb explosion particles
@@ -672,6 +764,24 @@
                         ball.isDisabled = true;
                     }
                     this.activateEffect(ball)
+                    // add flavor text for score increase
+                    let color = '#777'
+                    
+                    switch (ball.type) {
+                        case 'bomb':
+                            color = '#6666ff'
+                            break
+                        case 'piercing':
+                            color = '#66ff66'
+                            break
+                        default:
+                            color = '#ffffff'
+                            break
+                    }// projectiles and diamonds shouldn't be breaking blocks anyways
+                    ctx.font = '30px system-ui, sans-serif'
+                    let textWidth = ctx.measureText(`Score: ${currentScore}`).width
+                    //                             text, x, y, size, color, textAlign = 'right', direction = "down", lifetime = 40
+                    floatyTexts.push(new floatyText("+1", VIRTUAL_WIDTH * 0.4 + textWidth/2, 40, 30, color))
                 }
             }
 
@@ -833,6 +943,9 @@
             case 'game':
                 if (!isPaused && !isGameOver) {
                     updateGame(dt)
+                }
+                if (!isPaused) {
+                    updateText(dt)
                 }
                 drawGame()
                 break
@@ -1075,6 +1188,18 @@
             isGameOver = true
         }
     }
+    //stop when paused, not when game over
+    function updateText(dt) {
+        // Update flavor text and remove expired ones
+        for (let i = 0; i < floatyTexts.length; i++) {
+            const text = floatyTexts[i]
+            text.update(dt)
+            if (text.expired) {
+                floatyTexts.splice(i, 1)
+                i--
+            }
+        }
+    }
 
     function updateMenu() {
         // Check if the mouse is inside the button's boundaries
@@ -1134,6 +1259,10 @@
         }
         for (const particle of explosionParticles) {
             particle.display()
+        }
+        // Draw flavor text
+        for (const text of floatyTexts) {
+            text.display()
         }
 
         // Scoreboard - Lives
